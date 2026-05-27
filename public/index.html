@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>House Rental Admin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav>
+      <strong>House Rental Admin</strong>
+      <a href="#sales">Buy/Sell</a>
+      <a href="#rentals">Rent</a>
+      <a href="#loan">Loan Calculator</a>
+      <a href="#profit">Profit/Loss</a>
+    </nav>
+    <section>
+      <p class="eyebrow">Relational DB backed admin panel</p>
+      <h1>Manage homes for sale, rent, loans, and investment performance.</h1>
+      <p>Insert, search, update, and delete records while saving calculations to SQLite.</p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" id="dashboard">
+      <article><span id="saleCount">0</span><small>Buy/Sell Listings</small></article>
+      <article><span id="rentalCount">0</span><small>Rental Listings</small></article>
+      <article><span id="availableRentals">0</span><small>Available Rentals</small></article>
+      <article><span id="totalMonthlyRent">0</span><small>Total Monthly Rent</small></article>
+    </section>
+
+    <section class="panel" id="sales">
+      <div class="section-title">
+        <div><p class="eyebrow">Home buy/sell</p><h2>Buy/Sell List Insert Form</h2></div>
+        <input id="saleSearch" class="search" placeholder="Search sales by home, city, owner, status...">
+      </div>
+      <form id="saleForm" class="grid-form">
+        <input type="hidden" name="id"><input type="hidden" name="property_id">
+        <label>Title<input name="title" required></label>
+        <label>Address<input name="address" required></label>
+        <label>City<input name="city" required></label>
+        <label>Property Type<select name="property_type"><option>House</option><option>Condo</option><option>Apartment</option><option>Land</option></select></label>
+        <label>Bedrooms<input name="bedrooms" type="number" min="0" value="0"></label>
+        <label>Bathrooms<input name="bathrooms" type="number" min="0" value="0"></label>
+        <label>Area Sqft<input name="area_sqft" type="number" min="0" step="0.01" value="0"></label>
+        <label>Listing Type<select name="listing_type"><option>Sell</option><option>Buy</option></select></label>
+        <label>Price<input name="price" type="number" min="0" step="0.01" required></label>
+        <label>Status<select name="status"><option>Available</option><option>Reserved</option><option>Sold</option><option>Inactive</option></select></label>
+        <label>Listing Date<input name="listing_date" type="date"></label>
+        <label>Buyer/Seller Name<input name="buyer_or_seller_name"></label>
+        <label>Contact Phone<input name="contact_phone"></label>
+        <label>Owner Name<input name="owner_name"></label>
+        <label>Owner Phone<input name="owner_phone"></label>
+        <label class="wide">Notes<textarea name="notes"></textarea></label>
+        <button type="submit">Save Buy/Sell</button><button type="button" class="secondary" data-reset="saleForm">Clear</button>
+      </form>
+      <div class="table-wrap"><table><thead><tr><th>Home</th><th>Type</th><th>Price</th><th>Status</th><th>Contact</th><th>Actions</th></tr></thead><tbody id="saleRows"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="rentals">
+      <div class="section-title">
+        <div><p class="eyebrow">Home rent</p><h2>Rent Insert Form</h2></div>
+        <input id="rentalSearch" class="search" placeholder="Search rentals by home, city, tenant, status...">
+      </div>
+      <form id="rentalForm" class="grid-form">
+        <input type="hidden" name="id"><input type="hidden" name="property_id">
+        <label>Title<input name="title" required></label>
+        <label>Address<input name="address" required></label>
+        <label>City<input name="city" required></label>
+        <label>Property Type<select name="property_type"><option>House</option><option>Condo</option><option>Apartment</option><option>Land</option></select></label>
+        <label>Bedrooms<input name="bedrooms" type="number" min="0" value="0"></label>
+        <label>Bathrooms<input name="bathrooms" type="number" min="0" value="0"></label>
+        <label>Area Sqft<input name="area_sqft" type="number" min="0" step="0.01" value="0"></label>
+        <label>Monthly Rent<input name="monthly_rent" type="number" min="0" step="0.01" required></label>
+        <label>Deposit<input name="deposit" type="number" min="0" step="0.01" value="0"></label>
+        <label>Lease Start<input name="lease_start" type="date"></label>
+        <label>Lease End<input name="lease_end" type="date"></label>
+        <label>Tenant Name<input name="tenant_name"></label>
+        <label>Tenant Phone<input name="tenant_phone"></label>
+        <label>Status<select name="status"><option>Available</option><option>Occupied</option><option>Maintenance</option><option>Inactive</option></select></label>
+        <label>Owner Name<input name="owner_name"></label>
+        <label>Owner Phone<input name="owner_phone"></label>
+        <label class="wide">Notes<textarea name="notes"></textarea></label>
+        <button type="submit">Save Rent</button><button type="button" class="secondary" data-reset="rentalForm">Clear</button>
+      </form>
+      <div class="table-wrap"><table><thead><tr><th>Home</th><th>Rent</th><th>Lease</th><th>Status</th><th>Tenant</th><th>Actions</th></tr></thead><tbody id="rentalRows"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="loan">
+      <div class="section-title"><div><p class="eyebrow">KBZ style formula</p><h2>Home Loan Calculator</h2></div><input id="loanSearch" class="search" placeholder="Search saved homes to attach calculation..."></div>
+      <form id="loanForm" class="grid-form compact">
+        <label>Saved Property<select name="property_id" id="loanProperty"><option value="">No property selected</option></select></label>
+        <label>Property Value<input name="propertyValue" type="number" min="1" step="0.01" required></label>
+        <label>Down Payment %<input name="downPaymentPercent" type="number" min="0" max="99" step="0.01" value="50" required></label>
+        <label>Interest Rate %<input name="annualInterestRate" type="number" min="0" step="0.01" value="11" required></label>
+        <label>Loan Period (Years)<input name="loanYears" type="number" min="1" max="25" value="25" required></label>
+        <button type="submit">Calculate & Save</button>
+      </form>
+      <div id="loanResult" class="result"></div>
+    </section>
+
+    <section class="panel" id="profit">
+      <div class="section-title"><div><p class="eyebrow">Investment report</p><h2>Profit / Loss Calculator</h2></div><input id="profitSearch" class="search" placeholder="Search saved homes to attach calculation..."></div>
+      <form id="profitForm" class="grid-form compact">
+        <label>Saved Property<select name="property_id" id="profitProperty"><option value="">No property selected</option></select></label>
+        <label>Purchase Price<input name="purchasePrice" type="number" min="0" step="0.01" required></label>
+        <label>Current Value<input name="currentValue" type="number" min="0" step="0.01" required></label>
+        <label>Monthly Rent<input name="monthlyRent" type="number" min="0" step="0.01" required></label>
+        <label>Monthly Expenses<input name="monthlyExpenses" type="number" min="0" step="0.01" required></label>
+        <label>Other Monthly Income<input name="otherMonthlyIncome" type="number" min="0" step="0.01" value="0"></label>
+        <button type="submit">Calculate & Save</button>
+      </form>
+      <div id="profitResult" class="result"></div>
+    </section>
+  </main>
+
+  <div id="toast" role="status"></div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
